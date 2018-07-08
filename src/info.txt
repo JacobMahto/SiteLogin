@@ -1,0 +1,1 @@
+1. Navigation has been declared outside the body tag. Therefor each file which "includes" header and nav tag should start with <body> tag.

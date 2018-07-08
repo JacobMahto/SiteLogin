@@ -1,0 +1,28 @@
+$galimg : url("../img/galaxy.jpg");
+$piximg : url("../img/pixels.jpg");
+
+.galaxybg{
+  background: $galimg;
+}
+
+.pixelbg{
+  background: $piximg;
+}
+
+.signup{
+   margin:0 auto;
+}
+
+.signup-form{
+    margin-top:3%;
+}
+//
+// .jacob{
+// background:blue;
+// }
+//
+//  @media only screen and (max-width:400px){
+//   .jacob{
+//      background:black;
+//  }
+//  }
