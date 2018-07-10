@@ -5,13 +5,16 @@
   <div class="navbar-collapse collapse" id="menu">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a href="" class="nav-link">Home</a>
+        <a href="index.php" class="nav-link">Home</a>
       </li>
       <li class="nav-item">
-        <a href="" class="nav-link">Login</a>
+        <a href="login.php" class="nav-link">Login</a>
       </li>
       <li class="nav-item">
-        <a href="" class="nav-link">Register</a>
+        <a href="register.php" class="nav-link">Register</a>
+      </li>
+      <li class="nav-item">
+        <a href="logout.php" class="nav-link">Logout</a>
       </li>
     </ul>
   </div>

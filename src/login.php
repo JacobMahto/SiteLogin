@@ -3,6 +3,9 @@
 
 <body class="galaxybg">
   <div class="container" >
+<?php display_message();
+      validate_user_login();
+?>
   <div id="loginbox" class="mt-5 mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
     <div class="panel panel-info" >
       <div class="panel-heading">
@@ -18,7 +21,7 @@
 
         <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
 
-        <form id="loginform" class="form-horizontal" role="form">
+        <form id="loginform" class="form-horizontal" role="form" method="POST">
 
           <div style="margin-bottom: 25px" class="input-group">
             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -39,7 +42,7 @@
               </label>
             </div>
           </div>
-          <button type="button" class="d-block mr-auto btn btn-primary " name="button" style="width:35%;">Access</button>
+          <button type="submit" class="d-block mr-auto btn btn-primary " name="button" style="width:35%;">Access</button>
 
           <div style="margin-top:10px" class="form-group">
           <div class="form-group">
