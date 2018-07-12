@@ -13,8 +13,10 @@
       <li class="nav-item">
         <a href="register.php" class="nav-link">Register</a>
       </li>
+      <?php if(logged_in()): ?>
       <li class="nav-item">
         <a href="logout.php" class="nav-link">Logout</a>
+      <?php endif; ?>
       </li>
     </ul>
   </div>

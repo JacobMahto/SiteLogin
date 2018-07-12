@@ -1,5 +1,6 @@
 $galimg : url("../img/galaxy.jpg");
 $piximg : url("../img/pixels.jpg");
+$techimg : url("../img/tech.jpg");
 
 .galaxybg{
   background: $galimg;
@@ -9,6 +10,10 @@ $piximg : url("../img/pixels.jpg");
   background: $piximg;
 }
 
+.techbg{
+  background: $techimg;
+}
+
 .signup{
    margin:0 auto;
 }
@@ -16,13 +21,24 @@ $piximg : url("../img/pixels.jpg");
 .signup-form{
     margin-top:3%;
 }
-//
-// .jacob{
-// background:blue;
-// }
-//
-//  @media only screen and (max-width:400px){
-//   .jacob{
-//      background:black;
-//  }
-//  }
+
+.change{
+  color:white;
+
+}
+
+ @media only screen and (max-width:400px){
+  .change{
+     color:black;
+ }
+ }
+
+ .setSize{
+   font-size:2em;
+ }
+
+  @media only screen and (max-width:400px){
+   .setSize{
+      font-size:1.5em;
+  }
+  }

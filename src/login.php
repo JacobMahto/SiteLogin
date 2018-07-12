@@ -3,7 +3,11 @@
 
 <body class="galaxybg">
   <div class="container" >
-<?php display_message();
+<?php
+if(logged_in()){
+  redirect("admin.php");
+}
+display_message();
       validate_user_login();
 ?>
   <div id="loginbox" class="mt-5 mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
@@ -35,12 +39,15 @@
 
 
 
-          <div class="input-group text-light">
+          <div class="input-group text-light justify-content-between">
             <div class="checkbox">
               <label>
-                <input id="login-remember" type="checkbox" name="remember" value="1" class="" > Remember me
+                <input id="login-remember" type="checkbox" name="remember" value="on" class="" > Remember me
               </label>
             </div>
+            <a class="text-light font-italic" href="recover.php" >
+              <u>Forgot Password</u>
+            </a>
           </div>
           <button type="submit" class="d-block mr-auto btn btn-primary " name="button" style="width:35%;">Access</button>
 
@@ -53,6 +60,7 @@
                   Jacob V. Mahto
                 </a>
               </div>
+
             </div>
           </div>
         </form>

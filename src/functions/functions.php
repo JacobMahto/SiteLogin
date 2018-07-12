@@ -217,7 +217,15 @@ function validate_user_login(){
   if($_SERVER['REQUEST_METHOD']=="POST"){
     $username=clean($_POST['username']);
     $password=clean($_POST['password']);
+    $remember=isset($_POST['remember']);
 
+#Just for debugging to check the value returned by checkbox it is 1 (and "on")
+    // if($remember=="on"){
+    //   //die("yes".$remember);
+    // }
+    // else{
+    //   //die("no".$remember);
+    // }
 if(empty($username)){
   $errors[]="Enter your Username.";
 }
@@ -227,7 +235,7 @@ if(!empty($errors)){
   }
 }
 else{
-  if(login_user($username,$password)){
+  if(login_user($username,$password,$remember)){
     redirect("admin.php");
   }
   else{
@@ -240,7 +248,7 @@ else{
 }
 
 #**********************USER LOGIN FUNCTIONS*****************
-function login_user($username,$password){
+function login_user($username,$password,$remember){
   $password=md5($password);
 $sql="SELECT * FROM users WHERE username='$username' AND password='$password';";
 $result=query($sql);
@@ -248,6 +256,13 @@ if(row_count($result)==1){
   $row=fetch_array($result);
   $dbPassword=$row['password'];
 if($password===$dbPassword){
+  if($remember == "on"){
+    setcookie('username',$username,time()+84600);//cookie validity of 1 day
+    //setcookie('password',$password,time()+60);
+  }
+  else{
+
+  }
   $_SESSION['username']=$username;
   return true;
 }
@@ -263,7 +278,7 @@ else{
 #**********************LOGGED IN FUNCTIONS*****************
 
 function logged_in(){
-  if(isset($_SESSION['username'])){
+  if(isset($_SESSION['username']) || isset($_COOKIE["username"])){
     return true;
   }
   else{
@@ -271,5 +286,97 @@ function logged_in(){
   }
 }
 
+#**********************RECOVER PASSWORD FUNCTIONS*****************
+
+function recover_password(){
+  if($_SERVER['REQUEST_METHOD']=="POST"){
+ //echo "IT WORKS";
+if(isset($_SESSION["token"]) && $_POST['token']===$_SESSION['token']){
+  //die("tansen");
+  $email=clean($_POST['email']);
+if(email_exists($email)){
+  $validation_code=md5($email.microtime());
+  //cookie time of 5 minutes
+  setcookie('temp_access_code',$validation_code,time()+300);
+  $sql="UPDATE users SET validation_code='$validation_code' WHERE email='$email';";
+  $result=query($sql);
+  confirm($result);
+  $subject="Tech-Res Password Reset";
+  $message="Here is your password reset code : $validation_code
+Click here to reset your password http://localhost/siteLogin/src/code.php?email=$email&code=$validation_code
+  ";
+  $header = "From : noreply@JacobResearchLab.com";
+  if(send_email($email,$subject,$message,$header)){
+die("good");
+  }
+  else{
+    echo validation_errors("E-mail not sent.");
+  }
+  set_message("<p class='bg-success text-center'>Please check your inbox or spam folder for Password Reset link.</p>");
+  //set_message(success_message("Please check your inbox or spam folder for Password Reset link."));
+  redirect("index.php");
+}
+else{
+  validation_errors("This E-Mail doesn't exist.");
+}
+
+}
+redirect("index.php");
+  }
+}
+
+#**********************RESET CODE VALIDATION FUNCTIONS*****************
+function validate_code(){
+  if(isset($_COOKIE['temp_access_code'])){
+if($_SERVER['REQUEST_METHOD']=="GET" || $_SERVER['REQUEST_METHOD']=="POST"){
+  if(isset($_GET['email']) && isset($_GET['code']) && isset($_POST['code']) ){
+  $validation_code=clean($_GET['code']);
+  $email=clean($_GET['email']);
+  $sql="SELECT id FROM users WHERE validation_code='$validation_code' AND email='$email';";
+  $result=query($sql);
+  if(row_count($result)==1 && $validation_code==$_POST['code']){
+    setcookie('reset_code',$validation_code,time()+300);
+    redirect("reset.php?email=$email&code=$validation_code");
+  }
+  else{
+    echo validation_errors("Wrong Validation Code.");
+  }
+
+  }
+}
+  }
+  else{
+    set_message("<p class='bg-success text-center'>Sorry, Validation time duration has been expired.</p>");
+    redirect("recover.php");
+  }
+}
+
+#**********************PASSWORD RESET CODE VALIDATION FUNCTIONS*****************
+function password_reset(){
+  if(isset($_COOKIE['reset_code'])){
+    if(isset($_GET['email']) && isset($_GET['code']) && isset($_SESSION["token"]) && isset($_POST['token'])){
+      if($_SESSION['token']===$_POST['token']){
+        if($_POST['password']===$_POST['confirm_password']){
+          $email=clean($_GET['email']);
+          $password=md5($_POST['password']);
+  $sql="UPDATE users SET password='$password' WHERE email='$email';";
+  $result=query($sql);
+  set_message(success_message("Password Reset Successful."));
+  redirect("login.php");
+
+        }
+        else{
+echo validation_errors("Passwords Mismatch.");
+        }
+      }
+  }
+  }
+  else{
+    set_message(validation_errors("Sorry , Authentication Failed due to Server timeout."));
+    redirect("recover.php");
+  }
+
+
+}
 
  ?>

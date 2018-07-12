@@ -4,10 +4,26 @@
 .pixelbg {
   background: url("../img/pixels.jpg"); }
 
+.techbg {
+  background: url("../img/tech.jpg"); }
+
 .signup {
   margin: 0 auto; }
 
 .signup-form {
   margin-top: 3%; }
+
+.change {
+  color: white; }
+
+@media only screen and (max-width: 400px) {
+  .change {
+    color: black; } }
+.setSize {
+  font-size: 2em; }
+
+@media only screen and (max-width: 400px) {
+  .setSize {
+    font-size: 1.5em; } }
 
 /*# sourceMappingURL=style.css.map */

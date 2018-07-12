@@ -4,7 +4,7 @@
 <div class="jumbotron">
   <h1 class="text-center"><?php
 if(logged_in()){
-  echo "Logged in.";
+  echo "JRL SERVER ..<B>@OVERRIDE</B>";
 }
 else{
   redirect("index.php");
