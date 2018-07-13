@@ -64,38 +64,60 @@ DELIMITER;
 
 #send mail
 function send_email($email=null,$subject=null,$msg=null,$header=null){
-    try{$mail = new PHPMailer();                              // Passing `true` enables exceptions
-    }
-    catch(Exception $er){
-        echo $er;
-    }
-    try{
-    //Server settings
-    $mail->SMTPDebug = 2;                                 // Enable verbose debug output
-    $mail->isSMTP();                                      // Set mailer to use SMTP
-    $mail->Host = Config::SMTP_HOST;  // Specify main and backup SMTP servers
-    $mail->SMTPAuth = true;                               // Enable SMTP authentication
-    $mail->Username =  Config::SMTP_USER;                 // SMTP username
-    $mail->Password = Config::SMTP_PASSWORD;                           // SMTP password
-    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-    $mail->Port = Config::SMTP_PORT;                                    // TCP port to connect to  
-    $mail->setFrom("jvm@JacobResearchLab.com","Jacob V. Mahto");
-    $mail->addAddress($email);
-    //Content
-    $mail->isHTML(true);                                  // Set email format to HTML
-    $mail->Subject = $subject;
-    $mail->Body    = $msg;
-    $mail->AltBody = $msg;
-
-    $mail->send();
-    //return true;
-echo 'Message has been sent';
-} catch (Exception $e) {
-    echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-   // return false;
+    //Create a new PHPMailer instance
+$mail = new PHPMailer(true);
+//Tell PHPMailer to use SMTP
+$mail->isSMTP();
+//Enable SMTP debugging
+// 0 = off (for production use)
+// 1 = client messages
+// 2 = client and server messages
+$mail->SMTPDebug = 0;
+//Set the hostname of the mail server
+$mail->Host = Config::SMTP_HOST;
+// use
+// $mail->Host = gethostbyname('smtp.gmail.com');
+// if your network does not support SMTP over IPv6
+//Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+$mail->Port = Config::SMTP_PORT;
+//Set the encryption system to use - ssl (deprecated) or tls
+$mail->SMTPSecure = 'tls';
+//Whether to use SMTP authentication
+$mail->SMTPAuth = true;
+//Username to use for SMTP authentication - use full email address for gmail
+$mail->Username = Config::SMTP_USER;
+//Password to use for SMTP authentication
+$mail->Password = Config::SMTP_PASSWORD;
+//Set who the message is to be sent from
+$mail->setFrom('mkpsjaipur@gmail.com', "M.K. Public Sr. Sec. School");
+//Set an alternative reply-to address
+//$mail->addReplyTo('jacobmahto148@gmail.com', 'Jacob V. Mahto');
+//Set who the message is to be sent to
+$mail->addAddress($email);
+//Set the subject line-non-html
+$mail->Subject = $subject;
+//Read an HTML message body from an external file, convert referenced images to embedded,
+//convert HTML into a basic plain-text alternative body
+$mail->msgHTML($msg);
+//Replace the plain text body with one created manually
+$mail->AltBody = $msg;
+//Attach an image file
+//$mail->addAttachment('images/phpmailer_mini.png');
+//send the message, check for errors
+if (!$mail->send()) {
+    return true;
+    //set_message(validation_errors("Mailer Error: " . $mail->ErrorInfo()));
+} else {
+    return false;
+    //Section 2: IMAP
+    //Uncomment these to save your message in the 'Sent Mail' folder.
+    #if (save_mail($mail)) {
+    #    echo "Message saved!";
+    #}
 }
 //mail($email,$subject,$msg,$header);
 }
+
 
 #**********************VALIDATION FUNCTIONS*****************
 function validate_registration(){
@@ -211,11 +233,18 @@ function register_user($first_name,$last_name,$username,$email,$password){
     $result=query($sql);
     confirm($result);
 
+    //for localhost computer
     $subject = "Activate Account";
-    $msg = "Please Click the link below to activate your account -
-    http://localhost/siteLogin/src/activate.php?email=$email&code=$validation_code
-    ";
-    $header = "From : noreply@JacobResearchLab.com";
+//    $msg = "Welcome to MK Public School-Staff Regisstration Portal - Please Click the link below to activate your account -
+//    http://localhost/siteLogin/src/activate.php?email=$email&code=$validation_code
+//    ";
+
+    //for actual website    
+    $msg = "Welcome to <b>MK Public School-Staff Registration Portal</b> - Please Click the link below to activate your account -<br>
+   <a href='http://mkpsindia.000webhostapp.com/activate.php?email=$email&code=$validation_code'>Activate Account</a>
+    <br><b>Regards , <br><i>@Jacob V. Mahto</i></b>";
+    
+    $header = "From : jvm@JacobResearchLab.com";
     send_email($email,$subject,$msg,$header);
   }
   return true;
@@ -291,14 +320,14 @@ else{
 #**********************USER LOGIN FUNCTIONS*****************
 function login_user($username,$password,$remember){
   $password=md5($password);
-$sql="SELECT * FROM users WHERE username='$username' AND password='$password';";
+$sql="SELECT * FROM users WHERE username='$username' AND password='$password' AND active=1;";
 $result=query($sql);
 if(row_count($result)==1){
   $row=fetch_array($result);
   $dbPassword=$row['password'];
 if($password===$dbPassword){
   if($remember == "on"){
-    setcookie('username',$username,time()+84600);//cookie validity of 1 day
+    setcookie('username',$username,time()+86400);//cookie validity of 1 day
     //setcookie('password',$password,time()+60);
   }
   else{
@@ -343,9 +372,9 @@ if(email_exists($email)){
   $result=query($sql);
   confirm($result);
   $subject="Tech-Res Password Reset";
-  $message="Here is your password reset code : $validation_code
-Click here to reset your password http://localhost/siteLogin/src/code.php?email=$email&code=$validation_code
-  ";
+  $message="Here is your password reset code :<b> $validation_code </b>
+<br>Click here to reset your password <a href='http://mkpsindia.000webhostapp.com/code.php?email=$email&code=$validation_code'>Reset Account Password</a>
+  <br><b>Regards , <br><i>@Jacob V. Mahto</i></b>";
   $header = "From : noreply@JacobResearchLab.com";
   if(send_email($email,$subject,$message,$header)){
 die("good");

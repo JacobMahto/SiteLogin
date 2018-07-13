@@ -2,6 +2,7 @@
 require 'vendor/autoload.php';
 require 'functions/functions.php';
 
-send_email("jacob@gmail.com","testing<b>only","i am checking<b>only</b>");
+//echo "jacob";
+send_email("jacobmahto148@gmail.com","testing","i am checking<b>only</b>");
 
 ?>
