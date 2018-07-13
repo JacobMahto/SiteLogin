@@ -1,5 +1,16 @@
 <?php
+// Import PHPMailer classes into the global namespace
+// These must be at the top of your script, not inside a function
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
+require_once 'vendor/autoload.php';
+//require_once 'vendor/phpmailer/phpmailer/src/PHPMailer.php';;
+
+//foreach (glob("classes/*.php") as $filename)
+//{
+//    include $filename;
+//}
 #**********************HELPER FUNCTIONS*****************
 #function to clean a string of special characters like > , < , etc.
 function clean($string){
@@ -52,8 +63,38 @@ DELIMITER;
 }
 
 #send mail
-function send_email($email,$subject,$msg,$header){
-  mail($email,$subject,$msg,$header);
+function send_email($email=null,$subject=null,$msg=null,$header=null){
+    try{$mail = new PHPMailer();                              // Passing `true` enables exceptions
+    }
+    catch(Exception $er){
+        echo $er;
+    }
+    try{
+    //Server settings
+    $mail->SMTPDebug = 2;                                 // Enable verbose debug output
+    $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->Host = Config::SMTP_HOST;  // Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->Username =  Config::SMTP_USER;                 // SMTP username
+    $mail->Password = Config::SMTP_PASSWORD;                           // SMTP password
+    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->Port = Config::SMTP_PORT;                                    // TCP port to connect to  
+    $mail->setFrom("jvm@JacobResearchLab.com","Jacob V. Mahto");
+    $mail->addAddress($email);
+    //Content
+    $mail->isHTML(true);                                  // Set email format to HTML
+    $mail->Subject = $subject;
+    $mail->Body    = $msg;
+    $mail->AltBody = $msg;
+
+    $mail->send();
+    //return true;
+echo 'Message has been sent';
+} catch (Exception $e) {
+    echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+   // return false;
+}
+//mail($email,$subject,$msg,$header);
 }
 
 #**********************VALIDATION FUNCTIONS*****************

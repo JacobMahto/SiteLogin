@@ -1,0 +1,9 @@
+{
+    "require-dev": {
+        "phpmailer/phpmailer": "v6.0.0"
+    },
+    "autoload": {
+        "classmap": ["classes/"]
+    }
+    
+}
